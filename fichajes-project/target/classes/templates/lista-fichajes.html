@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Fichajes</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+        form { margin-bottom: 20px; }
+        label { margin-right: 5px; }
+        select, input, button { margin-right: 15px; padding: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Fichajes de Empleados</h1>
+    <a th:href="@{/fichajes/nuevo}">Nuevo fichaje</a>
+    <hr>
+    <form th:action="@{/fichajes}" method="get">
+        <label>Empleado:</label>
+        <select name="empleadoId">
+            <option value="">Todos</option>
+            <option th:each="emp : ${empleados}" th:value="${emp.id}"
+                    th:text="${emp.nombre} + ' (' + ${emp.dni} + ')'"></option>
+        </select>
+        <label>Desde:</label>
+        <input type="date" name="inicio" />
+        <label>Hasta:</label>
+        <input type="date" name="fin" />
+        <button type="submit">Filtrar</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Empleado</th>
+                <th>Tipo</th>
+                <th>Fecha/Hora</th>
+                <th>Centro (Ciudad)</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="f : ${fichajes}">
+                <td th:text="${f.id}"></td>
+                <td th:text="${f.empleado.nombre}"></td>
+                <td th:text="${f.tipo}"></td>
+                <td th:text="${#dates.format(f.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${f.centro.nombre + ' (' + f.centro.ciudad + ')'}"></td>
+                <td>
+                    <a th:href="@{/fichajes/editar/{id}(id=${f.id})}">Editar</a> |
+                    <a th:href="@{/fichajes/eliminar/{id}(id=${f.id})}"
+                       onclick="return confirm('¿Eliminar este fichaje?')">Eliminar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

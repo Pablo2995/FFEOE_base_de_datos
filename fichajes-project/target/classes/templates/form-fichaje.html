@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Fichaje</title>
+    <style>
+        form div { margin-bottom: 10px; }
+        label { display: inline-block; width: 120px; }
+        select, input { padding: 5px; width: 250px; }
+        button { padding: 8px 20px; }
+    </style>
+</head>
+<body>
+    <h1 th:if="${fichaje.id == null}">Nuevo Fichaje</h1>
+    <h1 th:if="${fichaje.id != null}">Editar Fichaje</h1>
+
+    <form th:action="@{${fichaje.id == null} ? '/fichajes/guardar' : '/fichajes/actualizar/' + ${fichaje.id}}"
+          th:object="${fichaje}" method="post">
+        <div>
+            <label>Empleado:</label>
+            <select name="empleadoId" required>
+                <option th:each="emp : ${empleados}"
+                        th:value="${emp.id}"
+                        th:text="${emp.nombre} + ' (' + ${emp.dni} + ')'"
+                        th:selected="${fichaje.empleado?.id == emp.id}"></option>
+            </select>
+        </div>
+        <div>
+            <label>Tipo:</label>
+            <select th:field="*{tipo}" required>
+                <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+            </select>
+        </div>
+        <div>
+            <label>Fecha/Hora:</label>
+            <input type="datetime-local" th:field="*{fechaHora}"
+                   th:value="${#dates.format(fichaje.fechaHora, 'yyyy-MM-dd\'T\'HH:mm')}" />
+        </div>
+        <div>
+            <label>Centro de trabajo:</label>
+            <select name="centroId" required>
+                <option th:each="c : ${centros}"
+                        th:value="${c.id}"
+                        th:text="${c.nombre} + ' - ' + ${c.ciudad}"
+                        th:selected="${fichaje.centro?.id == c.id}"></option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Guardar</button>
+            <a th:href="@{/fichajes}">Cancelar</a>
+        </div>
+    </form>
+</body>
+</html>
